@@ -12,7 +12,10 @@ import {
   ChevronRight, 
   CheckCircle, 
   Play,
-  AlertCircle
+  AlertCircle,
+  Timer,
+  Target,
+  BookOpen
 } from 'lucide-react'
 import { useQuiz } from '@/contexts/QuizContext'
 import { cn } from '@/lib/utils'
@@ -157,72 +160,111 @@ export function QuizDisplay({ onComplete }: QuizDisplayProps) {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Quiz Header */}
-      <Card className="card-hover">
-        <CardHeader>
+      <Card className="border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl">
+        <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center space-x-2">
-                <span>Question {state.currentQuestionIndex + 1} of {totalQuestions}</span>
-                <Badge variant="secondary">
-                  {currentQuestion.points} point{currentQuestion.points !== 1 ? 's' : ''}
-                </Badge>
+            <div className="space-y-2">
+              <CardTitle className="flex items-center space-x-3 text-xl">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <span className="gradient-text">Question {state.currentQuestionIndex + 1} of {totalQuestions}</span>
+                  <Badge variant="secondary" className="ml-3 bg-primary/10 text-primary hover:bg-primary/20">
+                    {currentQuestion.points} point{currentQuestion.points !== 1 ? 's' : ''}
+                  </Badge>
+                </div>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-base">
                 {state.currentQuiz?.title || 'Course Quiz'}
               </CardDescription>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
               {state.timeRemaining && (
-                <div className="flex items-center space-x-2 text-sm">
-                  <Clock className="h-4 w-4" />
-                  <span className="font-mono">{timeRemainingFormatted}</span>
+                <div className="flex items-center space-x-2 px-4 py-2 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                  <Timer className="h-4 w-4 text-amber-600" />
+                  <span className="font-mono text-amber-800 dark:text-amber-200 font-semibold">
+                    {timeRemainingFormatted}
+                  </span>
                 </div>
               )}
-              <div className="text-sm text-muted-foreground">
-                {Math.round(progress)}% complete
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">{Math.round(progress)}%</div>
+                <div className="text-xs text-muted-foreground">Complete</div>
               </div>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <Progress value={progress} className="w-full" />
+        <CardContent className="pt-0">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm font-medium">
+              <span>Progress</span>
+              <span>{state.currentQuestionIndex + 1} of {totalQuestions}</span>
+            </div>
+            <Progress 
+              value={progress} 
+              className="w-full h-3 bg-muted/50"
+            />
+          </div>
         </CardContent>
       </Card>
 
       {/* Question */}
-      <Card className="card-hover">
-        <CardHeader>
-          <CardTitle className="text-lg">{currentQuestion.question}</CardTitle>
-          {currentQuestion.reelTimestamp && (
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Play className="h-4 w-4" />
-              <span>Reference: {formatDuration(currentQuestion.reelTimestamp)}</span>
+      <Card className="border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-500">
+        <CardHeader className="pb-6">
+          <div className="space-y-4">
+            <div className="flex items-start space-x-3">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                <Target className="h-4 w-4 text-primary" />
+              </div>
+              <div className="flex-1">
+                <CardTitle className="text-xl leading-relaxed text-foreground">
+                  {currentQuestion.question}
+                </CardTitle>
+                {currentQuestion.reelTimestamp && (
+                  <div className="flex items-center space-x-2 mt-3 px-3 py-2 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <Play className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                      Reference: {formatDuration(currentQuestion.reelTimestamp)}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6 pt-0">
           {/* Multiple Choice */}
           {currentQuestion.type === 'multiple-choice' && currentQuestion.options && (
             <RadioGroup
               value={selectedAnswer || ''}
               onValueChange={handleAnswerChange}
-              className="space-y-3"
+              className="space-y-4"
             >
               {currentQuestion.options.map((option, index) => (
                 <div
                   key={index}
                   className={cn(
-                    "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-200 hover:bg-muted/50",
-                    selectedAnswer === option && "border-primary bg-primary/5"
+                    "group flex items-center space-x-4 p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer",
+                    selectedAnswer === option 
+                      ? "border-primary bg-primary/5 shadow-md scale-[1.02]" 
+                      : "border-muted hover:border-primary/50 hover:bg-muted/30"
                   )}
                 >
-                  <RadioGroupItem value={option} id={`option-${index}`} />
+                  <RadioGroupItem 
+                    value={option} 
+                    id={`option-${index}`}
+                    className="w-5 h-5 text-primary"
+                  />
                   <Label 
                     htmlFor={`option-${index}`} 
-                    className="flex-1 cursor-pointer text-sm"
+                    className="flex-1 cursor-pointer text-base font-medium leading-relaxed group-hover:text-primary transition-colors"
                   >
                     {option}
                   </Label>
+                  {selectedAnswer === option && (
+                    <CheckCircle className="h-5 w-5 text-primary animate-bounce-in" />
+                  )}
                 </div>
               ))}
             </RadioGroup>
@@ -233,29 +275,39 @@ export function QuizDisplay({ onComplete }: QuizDisplayProps) {
             <RadioGroup
               value={selectedAnswer || ''}
               onValueChange={handleAnswerChange}
-              className="space-y-3"
+              className="space-y-4"
             >
               <div
                 className={cn(
-                  "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-200 hover:bg-muted/50",
-                  selectedAnswer === 'true' && "border-primary bg-primary/5"
+                  "group flex items-center space-x-4 p-6 rounded-xl border-2 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer",
+                  selectedAnswer === 'true' 
+                    ? "border-green-500 bg-green-50 dark:bg-green-950/20 shadow-md scale-[1.02]" 
+                    : "border-muted hover:border-green-500/50 hover:bg-green-50/30"
                 )}
               >
-                <RadioGroupItem value="true" id="true" />
-                <Label htmlFor="true" className="flex-1 cursor-pointer text-sm">
+                <RadioGroupItem value="true" id="true" className="w-5 h-5 text-green-600" />
+                <Label htmlFor="true" className="flex-1 cursor-pointer text-lg font-semibold group-hover:text-green-600 transition-colors">
                   True
                 </Label>
+                {selectedAnswer === 'true' && (
+                  <CheckCircle className="h-6 w-6 text-green-600 animate-bounce-in" />
+                )}
               </div>
               <div
                 className={cn(
-                  "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-200 hover:bg-muted/50",
-                  selectedAnswer === 'false' && "border-primary bg-primary/5"
+                  "group flex items-center space-x-4 p-6 rounded-xl border-2 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer",
+                  selectedAnswer === 'false' 
+                    ? "border-red-500 bg-red-50 dark:bg-red-950/20 shadow-md scale-[1.02]" 
+                    : "border-muted hover:border-red-500/50 hover:bg-red-50/30"
                 )}
               >
-                <RadioGroupItem value="false" id="false" />
-                <Label htmlFor="false" className="flex-1 cursor-pointer text-sm">
+                <RadioGroupItem value="false" id="false" className="w-5 h-5 text-red-600" />
+                <Label htmlFor="false" className="flex-1 cursor-pointer text-lg font-semibold group-hover:text-red-600 transition-colors">
                   False
                 </Label>
+                {selectedAnswer === 'false' && (
+                  <CheckCircle className="h-6 w-6 text-red-600 animate-bounce-in" />
+                )}
               </div>
             </RadioGroup>
           )}
