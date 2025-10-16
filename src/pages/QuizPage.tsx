@@ -4,12 +4,14 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
 import { 
   Clock, 
   BookOpen, 
   ArrowLeft,
   AlertCircle,
-  Loader2
+  Loader2,
+  RotateCcw
 } from 'lucide-react'
 import { QuizProvider, useQuiz } from '@/contexts/QuizContext'
 import { QuizDisplay } from '@/components/quiz/QuizDisplay'
@@ -144,15 +146,20 @@ function QuizContent() {
     return (
       <DashboardLayout>
         <div className="p-6">
-          <Card className="animate-fade-in">
+          <Card className="animate-fade-in border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl">
             <CardContent className="p-12 text-center">
-              <div className="space-y-4">
-                <div className="w-16 h-16 mx-auto bg-muted rounded-full flex items-center justify-center animate-pulse">
-                  <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+              <div className="space-y-6">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center animate-pulse shadow-lg">
+                  <Loader2 className="h-10 w-10 text-primary animate-spin" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Loading Quiz...</h3>
-                  <p className="text-muted-foreground">Please wait while we prepare your quiz</p>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-semibold gradient-text bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+                    Loading Quiz...
+                  </h3>
+                  <p className="text-lg text-muted-foreground">Please wait while we prepare your quiz</p>
+                </div>
+                <div className="w-64 mx-auto">
+                  <Progress value={66} className="h-2" />
                 </div>
               </div>
             </CardContent>
@@ -166,17 +173,22 @@ function QuizContent() {
     return (
       <DashboardLayout>
         <div className="p-6">
-          <Card className="animate-fade-in border-destructive">
+          <Card className="animate-fade-in border-destructive border-2 bg-gradient-to-br from-destructive/5 to-destructive/10 backdrop-blur-sm shadow-xl">
             <CardContent className="p-12 text-center">
-              <div className="space-y-4">
-                <div className="w-16 h-16 mx-auto bg-destructive/10 rounded-full flex items-center justify-center">
-                  <AlertCircle className="h-8 w-8 text-destructive" />
+              <div className="space-y-6">
+                <div className="w-20 h-20 mx-auto bg-destructive/20 rounded-full flex items-center justify-center shadow-lg">
+                  <AlertCircle className="h-10 w-10 text-destructive" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-destructive">Error</h3>
-                  <p className="text-muted-foreground">{error}</p>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-semibold text-destructive">Error Loading Quiz</h3>
+                  <p className="text-lg text-muted-foreground">{error}</p>
                 </div>
-                <Button onClick={() => window.location.reload()} variant="outline">
+                <Button 
+                  onClick={() => window.location.reload()} 
+                  variant="outline" 
+                  className="btn-hover border-2 hover:border-destructive/50 hover:bg-destructive/5 group-hover:scale-105 transition-all duration-300"
+                >
+                  <RotateCcw className="mr-2 h-4 w-4 group-hover:rotate-180 transition-transform duration-300" />
                   Try Again
                 </Button>
               </div>
@@ -190,50 +202,54 @@ function QuizContent() {
   return (
     <DashboardLayout>
       <div className="p-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+        {/* Enhanced Header */}
+        <div className="flex items-center justify-between animate-fade-in-up">
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate(-1)}
-              className="btn-hover"
+              className="btn-hover hover:scale-110 transition-all duration-300"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold">Quiz Assessment</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-4xl font-bold gradient-text bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+                Quiz Assessment
+              </h1>
+              <p className="text-lg text-muted-foreground">
                 {course?.title || 'Course Quiz'}
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="flex items-center space-x-1">
-              <BookOpen className="h-3 w-3" />
+          <div className="flex items-center space-x-3">
+            <Badge variant="outline" className="flex items-center space-x-2 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 group-hover:scale-105">
+              <BookOpen className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300" />
               <span>Course Quiz</span>
             </Badge>
             {state.currentQuiz?.timeLimit && (
-              <Badge variant="outline" className="flex items-center space-x-1">
-                <Clock className="h-3 w-3" />
+              <Badge variant="outline" className="flex items-center space-x-2 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 group-hover:scale-105">
+                <Clock className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300" />
                 <span>{state.currentQuiz.timeLimit} min</span>
               </Badge>
             )}
           </div>
         </div>
 
-        {/* Quiz Content */}
-        {state.isSubmitted && state.attempt ? (
-          <FeedbackPanel
-            attempt={state.attempt}
-            passingScore={state.currentQuiz?.passingScore || 70}
-            onRetake={handleRetake}
-            onDownloadCertificate={state.attempt.passed ? handleDownloadCertificate : undefined}
-            onBackToCourse={handleBackToCourse}
-          />
-        ) : (
-          <QuizDisplay onComplete={handleQuizComplete} />
-        )}
+        {/* Enhanced Quiz Content */}
+        <div className="animate-fade-in-up">
+          {state.isSubmitted && state.attempt ? (
+            <FeedbackPanel
+              attempt={state.attempt}
+              passingScore={state.currentQuiz?.passingScore || 70}
+              onRetake={handleRetake}
+              onDownloadCertificate={state.attempt.passed ? handleDownloadCertificate : undefined}
+              onBackToCourse={handleBackToCourse}
+            />
+          ) : (
+            <QuizDisplay onComplete={handleQuizComplete} />
+          )}
+        </div>
       </div>
     </DashboardLayout>
   )

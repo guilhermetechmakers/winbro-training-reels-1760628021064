@@ -15,7 +15,8 @@ import {
   AlertCircle,
   Timer,
   Target,
-  BookOpen
+  BookOpen,
+  RotateCcw
 } from 'lucide-react'
 import { useQuiz } from '@/contexts/QuizContext'
 import { cn } from '@/lib/utils'
@@ -102,15 +103,20 @@ export function QuizDisplay({ onComplete }: QuizDisplayProps) {
 
   if (state.isLoading) {
     return (
-      <Card className="animate-fade-in">
+      <Card className="animate-fade-in border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl">
         <CardContent className="p-12 text-center">
-          <div className="space-y-4">
-            <div className="w-16 h-16 mx-auto bg-muted rounded-full flex items-center justify-center animate-pulse">
-              <Clock className="h-8 w-8 text-muted-foreground" />
+          <div className="space-y-6">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center animate-pulse shadow-lg">
+              <Clock className="h-10 w-10 text-primary animate-spin" />
             </div>
-            <div>
-              <h3 className="text-lg font-semibold">Submitting Quiz...</h3>
-              <p className="text-muted-foreground">Please wait while we process your answers</p>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-semibold gradient-text bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+                Submitting Quiz...
+              </h3>
+              <p className="text-lg text-muted-foreground">Please wait while we process your answers</p>
+            </div>
+            <div className="w-64 mx-auto">
+              <Progress value={75} className="h-2" />
             </div>
           </div>
         </CardContent>
@@ -120,17 +126,22 @@ export function QuizDisplay({ onComplete }: QuizDisplayProps) {
 
   if (state.error) {
     return (
-      <Card className="animate-fade-in border-destructive">
+      <Card className="animate-fade-in border-destructive border-2 bg-gradient-to-br from-destructive/5 to-destructive/10 backdrop-blur-sm shadow-xl">
         <CardContent className="p-12 text-center">
-          <div className="space-y-4">
-            <div className="w-16 h-16 mx-auto bg-destructive/10 rounded-full flex items-center justify-center">
-              <AlertCircle className="h-8 w-8 text-destructive" />
+          <div className="space-y-6">
+            <div className="w-20 h-20 mx-auto bg-destructive/20 rounded-full flex items-center justify-center shadow-lg">
+              <AlertCircle className="h-10 w-10 text-destructive" />
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-destructive">Error</h3>
-              <p className="text-muted-foreground">{state.error}</p>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-semibold text-destructive">Error Submitting Quiz</h3>
+              <p className="text-lg text-muted-foreground">{state.error}</p>
             </div>
-            <Button onClick={() => window.location.reload()} variant="outline">
+            <Button 
+              onClick={() => window.location.reload()} 
+              variant="outline" 
+              className="btn-hover border-2 hover:border-destructive/50 hover:bg-destructive/5 group-hover:scale-105 transition-all duration-300"
+            >
+              <RotateCcw className="mr-2 h-4 w-4 group-hover:rotate-180 transition-transform duration-300" />
               Try Again
             </Button>
           </div>
@@ -141,15 +152,15 @@ export function QuizDisplay({ onComplete }: QuizDisplayProps) {
 
   if (!currentQuestion) {
     return (
-      <Card className="animate-fade-in">
+      <Card className="animate-fade-in border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl">
         <CardContent className="p-12 text-center">
-          <div className="space-y-4">
-            <div className="w-16 h-16 mx-auto bg-muted rounded-full flex items-center justify-center">
-              <AlertCircle className="h-8 w-8 text-muted-foreground" />
+          <div className="space-y-6">
+            <div className="w-20 h-20 mx-auto bg-muted/20 rounded-full flex items-center justify-center shadow-lg">
+              <AlertCircle className="h-10 w-10 text-muted-foreground" />
             </div>
-            <div>
-              <h3 className="text-lg font-semibold">No Quiz Available</h3>
-              <p className="text-muted-foreground">There are no questions in this quiz</p>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-semibold">No Quiz Available</h3>
+              <p className="text-lg text-muted-foreground">There are no questions in this quiz</p>
             </div>
           </div>
         </CardContent>
@@ -159,72 +170,90 @@ export function QuizDisplay({ onComplete }: QuizDisplayProps) {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Quiz Header */}
-      <Card className="border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl">
-        <CardHeader className="pb-4">
+      {/* Enhanced Quiz Header */}
+      <Card className="group hover:shadow-2xl hover:-translate-y-1 transition-all duration-700 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl relative overflow-hidden">
+        {/* Animated background effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        
+        <CardHeader className="pb-4 relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <CardTitle className="flex items-center space-x-3 text-xl">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <BookOpen className="h-5 w-5 text-primary" />
+            <div className="space-y-3">
+              <CardTitle className="flex items-center space-x-4 text-2xl">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-xl">
+                  <BookOpen className="h-6 w-6 text-primary group-hover:text-secondary transition-colors duration-500" />
                 </div>
                 <div>
-                  <span className="gradient-text">Question {state.currentQuestionIndex + 1} of {totalQuestions}</span>
-                  <Badge variant="secondary" className="ml-3 bg-primary/10 text-primary hover:bg-primary/20">
+                  <span className="gradient-text bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent text-2xl font-bold">
+                    Question {state.currentQuestionIndex + 1} of {totalQuestions}
+                  </span>
+                  <Badge 
+                    variant="secondary" 
+                    className="ml-4 bg-gradient-to-r from-primary/10 to-secondary/10 text-primary hover:bg-primary/20 group-hover:scale-110 transition-all duration-300"
+                  >
+                    <Target className="h-3 w-3 mr-1" />
                     {currentQuestion.points} point{currentQuestion.points !== 1 ? 's' : ''}
                   </Badge>
                 </div>
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-lg group-hover:text-foreground/80 transition-colors duration-500">
                 {state.currentQuiz?.title || 'Course Quiz'}
               </CardDescription>
             </div>
             <div className="flex items-center space-x-6">
               {state.timeRemaining && (
-                <div className="flex items-center space-x-2 px-4 py-2 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                  <Timer className="h-4 w-4 text-amber-600" />
-                  <span className="font-mono text-amber-800 dark:text-amber-200 font-semibold">
+                <div className="flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-xl border-2 border-amber-200 dark:border-amber-800 group-hover:scale-105 transition-all duration-300">
+                  <Timer className="h-5 w-5 text-amber-600 group-hover:rotate-12 transition-transform duration-300" />
+                  <span className="font-mono text-amber-800 dark:text-amber-200 font-bold text-lg">
                     {timeRemainingFormatted}
                   </span>
                 </div>
               )}
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">{Math.round(progress)}%</div>
-                <div className="text-xs text-muted-foreground">Complete</div>
+              <div className="text-center group-hover:scale-105 transition-transform duration-300">
+                <div className="text-3xl font-bold text-primary group-hover:text-secondary transition-colors duration-500">{Math.round(progress)}%</div>
+                <div className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors duration-500">Complete</div>
               </div>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm font-medium">
+        <CardContent className="pt-0 relative z-10">
+          <div className="space-y-3">
+            <div className="flex justify-between text-sm font-medium group-hover:text-foreground/80 transition-colors duration-500">
               <span>Progress</span>
               <span>{state.currentQuestionIndex + 1} of {totalQuestions}</span>
             </div>
             <Progress 
               value={progress} 
-              className="w-full h-3 bg-muted/50"
+              className="w-full h-3 bg-muted/50 group-hover:h-4 transition-all duration-300"
             />
           </div>
         </CardContent>
+        
+        {/* Floating particles effect */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+          <div className="absolute top-4 right-4 w-1 h-1 bg-primary/60 rounded-full animate-ping" />
+          <div className="absolute bottom-4 left-4 w-1.5 h-1.5 bg-secondary/60 rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
+        </div>
       </Card>
 
-      {/* Question */}
-      <Card className="border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-500">
-        <CardHeader className="pb-6">
-          <div className="space-y-4">
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
-                <Target className="h-4 w-4 text-primary" />
+      {/* Enhanced Question */}
+      <Card className="group hover:shadow-2xl hover:-translate-y-1 transition-all duration-700 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl relative overflow-hidden">
+        {/* Animated background effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        
+        <CardHeader className="pb-6 relative z-10">
+          <div className="space-y-6">
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center flex-shrink-0 mt-1 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-xl">
+                <Target className="h-6 w-6 text-primary group-hover:text-secondary transition-colors duration-500" />
               </div>
               <div className="flex-1">
-                <CardTitle className="text-xl leading-relaxed text-foreground">
+                <CardTitle className="text-2xl leading-relaxed text-foreground group-hover:text-primary transition-colors duration-500 group-hover:scale-105 transition-transform duration-300">
                   {currentQuestion.question}
                 </CardTitle>
                 {currentQuestion.reelTimestamp && (
-                  <div className="flex items-center space-x-2 mt-3 px-3 py-2 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <Play className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                  <div className="flex items-center space-x-3 mt-4 px-4 py-3 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 rounded-xl border-2 border-blue-200 dark:border-blue-800 group-hover:scale-105 transition-all duration-300">
+                    <Play className="h-5 w-5 text-blue-600 group-hover:scale-110 transition-transform duration-300" />
+                    <span className="text-base font-semibold text-blue-800 dark:text-blue-200">
                       Reference: {formatDuration(currentQuestion.reelTimestamp)}
                     </span>
                   </div>
@@ -233,8 +262,8 @@ export function QuizDisplay({ onComplete }: QuizDisplayProps) {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6 pt-0">
-          {/* Multiple Choice */}
+        <CardContent className="space-y-6 pt-0 relative z-10">
+          {/* Enhanced Multiple Choice */}
           {currentQuestion.type === 'multiple-choice' && currentQuestion.options && (
             <RadioGroup
               value={selectedAnswer || ''}
@@ -245,112 +274,147 @@ export function QuizDisplay({ onComplete }: QuizDisplayProps) {
                 <div
                   key={index}
                   className={cn(
-                    "group flex items-center space-x-4 p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer",
+                    "group flex items-center space-x-4 p-6 rounded-2xl border-2 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 cursor-pointer relative overflow-hidden",
                     selectedAnswer === option 
-                      ? "border-primary bg-primary/5 shadow-md scale-[1.02]" 
-                      : "border-muted hover:border-primary/50 hover:bg-muted/30"
+                      ? "border-primary bg-gradient-to-r from-primary/10 to-secondary/10 shadow-xl scale-[1.02] ring-2 ring-primary/20" 
+                      : "border-muted hover:border-primary/50 hover:bg-gradient-to-r hover:from-primary/5 hover:to-secondary/5"
                   )}
+                  style={{ transitionDelay: `${index * 100}ms` }}
                 >
+                  {/* Animated background effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
                   <RadioGroupItem 
                     value={option} 
                     id={`option-${index}`}
-                    className="w-5 h-5 text-primary"
+                    className="w-6 h-6 text-primary group-hover:scale-110 transition-transform duration-300 relative z-10"
                   />
                   <Label 
                     htmlFor={`option-${index}`} 
-                    className="flex-1 cursor-pointer text-base font-medium leading-relaxed group-hover:text-primary transition-colors"
+                    className="flex-1 cursor-pointer text-lg font-medium leading-relaxed group-hover:text-primary transition-colors duration-300 relative z-10"
                   >
                     {option}
                   </Label>
                   {selectedAnswer === option && (
-                    <CheckCircle className="h-5 w-5 text-primary animate-bounce-in" />
+                    <CheckCircle className="h-6 w-6 text-primary animate-bounce-in group-hover:scale-110 transition-transform duration-300 relative z-10" />
                   )}
+                  
+                  {/* Floating particles effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className="absolute top-2 right-2 w-1 h-1 bg-primary/60 rounded-full animate-ping" />
+                    <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-secondary/60 rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
+                  </div>
                 </div>
               ))}
             </RadioGroup>
           )}
 
-          {/* True/False */}
+          {/* Enhanced True/False */}
           {currentQuestion.type === 'true-false' && (
             <RadioGroup
               value={selectedAnswer || ''}
               onValueChange={handleAnswerChange}
-              className="space-y-4"
+              className="space-y-6"
             >
               <div
                 className={cn(
-                  "group flex items-center space-x-4 p-6 rounded-xl border-2 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer",
+                  "group flex items-center space-x-6 p-8 rounded-2xl border-2 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 cursor-pointer relative overflow-hidden",
                   selectedAnswer === 'true' 
-                    ? "border-green-500 bg-green-50 dark:bg-green-950/20 shadow-md scale-[1.02]" 
-                    : "border-muted hover:border-green-500/50 hover:bg-green-50/30"
+                    ? "border-green-500 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 shadow-xl scale-[1.02] ring-2 ring-green-500/20" 
+                    : "border-muted hover:border-green-500/50 hover:bg-gradient-to-r hover:from-green-50/30 hover:to-emerald-50/30"
                 )}
+                style={{ transitionDelay: '100ms' }}
               >
-                <RadioGroupItem value="true" id="true" className="w-5 h-5 text-green-600" />
-                <Label htmlFor="true" className="flex-1 cursor-pointer text-lg font-semibold group-hover:text-green-600 transition-colors">
+                {/* Animated background effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <RadioGroupItem value="true" id="true" className="w-6 h-6 text-green-600 group-hover:scale-110 transition-transform duration-300 relative z-10" />
+                <Label htmlFor="true" className="flex-1 cursor-pointer text-xl font-bold group-hover:text-green-600 transition-colors duration-300 relative z-10">
                   True
                 </Label>
                 {selectedAnswer === 'true' && (
-                  <CheckCircle className="h-6 w-6 text-green-600 animate-bounce-in" />
+                  <CheckCircle className="h-7 w-7 text-green-600 animate-bounce-in group-hover:scale-110 transition-transform duration-300 relative z-10" />
                 )}
+                
+                {/* Floating particles effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className="absolute top-2 right-2 w-1 h-1 bg-green-500/60 rounded-full animate-ping" />
+                  <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-emerald-500/60 rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
+                </div>
               </div>
               <div
                 className={cn(
-                  "group flex items-center space-x-4 p-6 rounded-xl border-2 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer",
+                  "group flex items-center space-x-6 p-8 rounded-2xl border-2 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 cursor-pointer relative overflow-hidden",
                   selectedAnswer === 'false' 
-                    ? "border-red-500 bg-red-50 dark:bg-red-950/20 shadow-md scale-[1.02]" 
-                    : "border-muted hover:border-red-500/50 hover:bg-red-50/30"
+                    ? "border-red-500 bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20 shadow-xl scale-[1.02] ring-2 ring-red-500/20" 
+                    : "border-muted hover:border-red-500/50 hover:bg-gradient-to-r hover:from-red-50/30 hover:to-rose-50/30"
                 )}
+                style={{ transitionDelay: '200ms' }}
               >
-                <RadioGroupItem value="false" id="false" className="w-5 h-5 text-red-600" />
-                <Label htmlFor="false" className="flex-1 cursor-pointer text-lg font-semibold group-hover:text-red-600 transition-colors">
+                {/* Animated background effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <RadioGroupItem value="false" id="false" className="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform duration-300 relative z-10" />
+                <Label htmlFor="false" className="flex-1 cursor-pointer text-xl font-bold group-hover:text-red-600 transition-colors duration-300 relative z-10">
                   False
                 </Label>
                 {selectedAnswer === 'false' && (
-                  <CheckCircle className="h-6 w-6 text-red-600 animate-bounce-in" />
+                  <CheckCircle className="h-7 w-7 text-red-600 animate-bounce-in group-hover:scale-110 transition-transform duration-300 relative z-10" />
                 )}
+                
+                {/* Floating particles effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className="absolute top-2 right-2 w-1 h-1 bg-red-500/60 rounded-full animate-ping" />
+                  <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-rose-500/60 rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
+                </div>
               </div>
             </RadioGroup>
           )}
 
-          {/* Short Answer */}
+          {/* Enhanced Short Answer */}
           {currentQuestion.type === 'short-answer' && (
-            <div className="space-y-2">
-              <Label htmlFor="short-answer">Your Answer</Label>
+            <div className="space-y-4">
+              <Label htmlFor="short-answer" className="text-lg font-semibold group-hover:text-primary transition-colors duration-300">
+                Your Answer
+              </Label>
               <Input
                 id="short-answer"
                 value={shortAnswer}
                 onChange={(e) => handleShortAnswerChange(e.target.value)}
                 placeholder="Enter your answer here..."
-                className="input-focus"
+                className="h-12 text-lg input-focus group-hover:border-primary/50 group-hover:bg-primary/5 transition-all duration-300"
               />
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Navigation */}
-      <Card>
-        <CardContent className="p-6">
+      {/* Enhanced Navigation */}
+      <Card className="group hover:shadow-2xl hover:-translate-y-1 transition-all duration-700 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl relative overflow-hidden">
+        {/* Animated background effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        
+        <CardContent className="p-6 relative z-10">
           <div className="flex items-center justify-between">
             <Button
               variant="outline"
               onClick={handlePrevious}
               disabled={isFirstQuestion}
-              className="btn-hover"
+              className="btn-hover border-2 hover:border-primary/50 hover:bg-primary/5 group-hover:scale-105 transition-all duration-300"
             >
-              <ChevronLeft className="h-4 w-4 mr-2" />
+              <ChevronLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform duration-300" />
               Previous
             </Button>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               {!isLastQuestion && (
                 <Button
                   onClick={handleNext}
                   disabled={!selectedAnswer && currentQuestion.type !== 'short-answer'}
-                  className="btn-hover"
+                  className="btn-hover border-2 hover:border-primary/50 hover:bg-primary/5 group-hover:scale-105 transition-all duration-300"
                 >
                   Next
-                  <ChevronRight className="h-4 w-4 ml-2" />
+                  <ChevronRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                 </Button>
               )}
               
@@ -358,15 +422,21 @@ export function QuizDisplay({ onComplete }: QuizDisplayProps) {
                 <Button
                   onClick={handleSubmit}
                   disabled={!hasAnsweredAll}
-                  className="btn-hover bg-primary hover:bg-primary/90"
+                  className="btn-hover shadow-lg hover:shadow-xl group-hover:scale-105 transition-all duration-300 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
                 >
                   Submit Quiz
-                  <CheckCircle className="h-4 w-4 ml-2" />
+                  <CheckCircle className="h-4 w-4 ml-2 group-hover:scale-110 transition-transform duration-300" />
                 </Button>
               )}
             </div>
           </div>
         </CardContent>
+        
+        {/* Floating particles effect */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+          <div className="absolute top-4 right-4 w-1 h-1 bg-primary/60 rounded-full animate-ping" />
+          <div className="absolute bottom-4 left-4 w-1.5 h-1.5 bg-secondary/60 rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
+        </div>
       </Card>
     </div>
   )
