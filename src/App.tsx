@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryProvider } from '@/contexts/QueryProvider'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { QuizProvider } from '@/contexts/QuizContext'
 import { Header } from '@/components/layout/Header'
 import { Toaster } from 'sonner'
 
@@ -37,10 +38,11 @@ function App() {
   return (
     <QueryProvider>
       <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-background">
-            <Header />
-            <main className="flex-1">
+        <QuizProvider>
+          <Router>
+            <div className="min-h-screen bg-background">
+              <Header />
+              <main className="flex-1">
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<LandingPage />} />
@@ -131,20 +133,21 @@ function App() {
                 <Route path="/500" element={<ServerErrorPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
-            </main>
-            <Toaster 
-              position="top-right"
-              toastOptions={{
-                duration: 4000,
-                style: {
-                  background: 'hsl(var(--card))',
-                  color: 'hsl(var(--card-foreground))',
-                  border: '1px solid hsl(var(--border))',
-                },
-              }}
-            />
-          </div>
-        </Router>
+              </main>
+              <Toaster 
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
+                  style: {
+                    background: 'hsl(var(--card))',
+                    color: 'hsl(var(--card-foreground))',
+                    border: '1px solid hsl(var(--border))',
+                  },
+                }}
+              />
+            </div>
+          </Router>
+        </QuizProvider>
       </AuthProvider>
     </QueryProvider>
   )
