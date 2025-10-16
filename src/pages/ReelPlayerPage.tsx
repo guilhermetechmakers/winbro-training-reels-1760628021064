@@ -1,5 +1,22 @@
+import { useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { Play, Volume2, Settings, Bookmark, Share, Download, Clock, User, Calendar } from 'lucide-react'
+import { 
+  Play, 
+  Pause, 
+  Volume2, 
+  VolumeX, 
+  Bookmark, 
+  Share, 
+  Download, 
+  Clock, 
+  User, 
+  Calendar,
+  Maximize,
+  Minimize,
+  SkipBack,
+  SkipForward,
+  Captions
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -7,73 +24,278 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout'
 
 export default function ReelPlayerPage() {
   const { id } = useParams()
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [volume, setVolume] = useState(1)
+  const [isMuted, setIsMuted] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [showCaptions, setShowCaptions] = useState(false)
   
   // Mock data - in real app, this would come from API
   const reel = {
     id: id || '1',
     title: 'Proper Lifting Techniques for Heavy Equipment',
-    description: 'Learn the correct way to lift heavy objects to prevent injury and maintain safety standards.',
+    description: 'Learn the correct way to lift heavy objects to prevent injury and maintain safety standards. This comprehensive guide covers proper body mechanics, equipment usage, and safety protocols.',
     duration: 150, // seconds
     thumbnail: '/api/placeholder/1280/720',
     videoUrl: '/api/placeholder/video.mp4',
-    tags: ['safety', 'lifting', 'ergonomics', 'equipment'],
+    hlsUrl: '/api/placeholder/playlist.m3u8',
+    tags: ['safety', 'lifting', 'ergonomics', 'equipment', 'maintenance'],
     machineModel: 'Caterpillar 320D',
     process: 'Equipment Maintenance',
     tooling: 'Hydraulic Jack, Safety Harness',
     author: {
       name: 'John Smith',
-      role: 'Safety Trainer'
+      role: 'Safety Trainer',
+      avatar: '/api/placeholder/40/40'
     },
     createdAt: '2024-01-15',
     viewCount: 1247,
     rating: 4.8,
+    likes: 89,
+    dislikes: 3,
     transcript: {
       segments: [
-        { startTime: 0, endTime: 30, text: 'Welcome to today\'s safety training on proper lifting techniques.' },
-        { startTime: 30, endTime: 60, text: 'First, always assess the weight and size of the object before attempting to lift.' },
-        { startTime: 60, endTime: 90, text: 'Position your feet shoulder-width apart and keep your back straight.' },
-        { startTime: 90, endTime: 120, text: 'Bend at the knees, not the waist, and grip the object firmly with both hands.' },
-        { startTime: 120, endTime: 150, text: 'Lift using your leg muscles while keeping the object close to your body.' }
+        { startTime: 0, endTime: 30, text: 'Welcome to today\'s safety training on proper lifting techniques for heavy equipment operations.' },
+        { startTime: 30, endTime: 60, text: 'First, always assess the weight and size of the object before attempting to lift. Check for any sharp edges or hazardous materials.' },
+        { startTime: 60, endTime: 90, text: 'Position your feet shoulder-width apart and keep your back straight. This is crucial for preventing injury.' },
+        { startTime: 90, endTime: 120, text: 'Bend at the knees, not the waist, and grip the object firmly with both hands. Use proper lifting straps if available.' },
+        { startTime: 120, endTime: 150, text: 'Lift using your leg muscles while keeping the object close to your body. Never twist while lifting.' }
       ]
+    },
+    relatedReels: [
+      {
+        id: '2',
+        title: 'Safety Equipment Inspection',
+        duration: 120,
+        thumbnail: '/api/placeholder/320/180',
+        tags: ['safety', 'inspection']
+      },
+      {
+        id: '3',
+        title: 'Emergency Procedures',
+        duration: 180,
+        thumbnail: '/api/placeholder/320/180',
+        tags: ['safety', 'emergency']
+      },
+      {
+        id: '4',
+        title: 'Equipment Maintenance Basics',
+        duration: 200,
+        thumbnail: '/api/placeholder/320/180',
+        tags: ['maintenance', 'equipment']
+      }
+    ],
+    comments: [
+      {
+        id: '1',
+        author: 'Mike Johnson',
+        text: 'Great explanation! This really helped me understand the proper technique.',
+        timestamp: '2 hours ago',
+        likes: 5
+      },
+      {
+        id: '2',
+        author: 'Sarah Wilson',
+        text: 'Very helpful for new employees. Should be mandatory viewing.',
+        timestamp: '1 day ago',
+        likes: 3
+      }
+    ]
+  }
+
+  // Video player controls
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause()
+      } else {
+        videoRef.current.play()
+      }
+      setIsPlaying(!isPlaying)
     }
   }
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      setCurrentTime(videoRef.current.currentTime)
+    }
+  }
+
+  const handleSeek = (time: number) => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = time
+      setCurrentTime(time)
+    }
+  }
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted
+      setIsMuted(!isMuted)
+    }
+  }
+
+  const handleVolumeChange = (newVolume: number) => {
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume
+      setVolume(newVolume)
+    }
+  }
+
+  const toggleFullscreen = () => {
+    if (videoRef.current) {
+      if (!isFullscreen) {
+        videoRef.current.requestFullscreen()
+      } else {
+        document.exitFullscreen()
+      }
+      setIsFullscreen(!isFullscreen)
+    }
+  }
+
+
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60)
+    const seconds = Math.floor(time % 60)
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
+
 
   return (
     <DashboardLayout>
       <div className="p-6 space-y-6">
         {/* Video Player */}
-        <div className="space-y-4">
-          <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center space-y-4">
-                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                  <Play className="w-8 h-8 text-white" />
-                </div>
-                <p className="text-white/80">Video Player Placeholder</p>
-                <p className="text-white/60 text-sm">Duration: {Math.floor(reel.duration / 60)}:{(reel.duration % 60).toString().padStart(2, '0')}</p>
+        <div className="space-y-6">
+          <div className="relative aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl group">
+            {/* Video Element */}
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              poster={reel.thumbnail}
+              onTimeUpdate={handleTimeUpdate}
+              onLoadedMetadata={() => setDuration(reel.duration)}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+            >
+              <source src={reel.hlsUrl} type="application/x-mpegURL" />
+              <source src={reel.videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            
+            {/* Play Button Overlay */}
+            {!isPlaying && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Button
+                  size="lg"
+                  className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-300 hover:scale-110"
+                  onClick={togglePlay}
+                >
+                  <Play className="w-8 h-8 text-white ml-1" />
+                </Button>
               </div>
-            </div>
+            )}
             
             {/* Video Controls Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-              <div className="flex items-center space-x-4">
-                <Button size="icon" variant="ghost" className="text-white hover:bg-white/20">
-                  <Play className="h-4 w-4" />
-                </Button>
-                <div className="flex-1 bg-white/20 rounded-full h-1">
-                  <div className="bg-white rounded-full h-1 w-1/3" />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {/* Progress Bar */}
+              <div className="mb-4">
+                <div 
+                  className="w-full bg-white/30 rounded-full h-1 cursor-pointer"
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect()
+                    const clickX = e.clientX - rect.left
+                    const newTime = (clickX / rect.width) * duration
+                    handleSeek(newTime)
+                  }}
+                >
+                  <div 
+                    className="bg-primary rounded-full h-1 transition-all duration-200"
+                    style={{ width: `${(currentTime / duration) * 100}%` }}
+                  />
                 </div>
-                <div className="flex items-center space-x-2 text-white text-sm">
-                  <span>0:30</span>
-                  <span>/</span>
-                  <span>{Math.floor(reel.duration / 60)}:{(reel.duration % 60).toString().padStart(2, '0')}</span>
+              </div>
+              
+              {/* Controls */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    className="text-white hover:bg-white/20"
+                    onClick={togglePlay}
+                  >
+                    {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                  </Button>
+                  
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    className="text-white hover:bg-white/20"
+                    onClick={() => handleSeek(Math.max(0, currentTime - 10))}
+                  >
+                    <SkipBack className="h-4 w-4" />
+                  </Button>
+                  
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    className="text-white hover:bg-white/20"
+                    onClick={() => handleSeek(Math.min(duration, currentTime + 10))}
+                  >
+                    <SkipForward className="h-4 w-4" />
+                  </Button>
+                  
+                  <div className="flex items-center space-x-2 text-white text-sm">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>/</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
                 </div>
-                <Button size="icon" variant="ghost" className="text-white hover:bg-white/20">
-                  <Volume2 className="h-4 w-4" />
-                </Button>
-                <Button size="icon" variant="ghost" className="text-white hover:bg-white/20">
-                  <Settings className="h-4 w-4" />
-                </Button>
+                
+                <div className="flex items-center space-x-2">
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    className="text-white hover:bg-white/20"
+                    onClick={toggleMute}
+                  >
+                    {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  </Button>
+                  
+                  <div className="w-20">
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value={isMuted ? 0 : volume}
+                      onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                      className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+                  
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    className="text-white hover:bg-white/20"
+                    onClick={() => setShowCaptions(!showCaptions)}
+                  >
+                    <Captions className="h-4 w-4" />
+                  </Button>
+                  
+                  <Button 
+                    size="icon" 
+                    variant="ghost" 
+                    className="text-white hover:bg-white/20"
+                    onClick={toggleFullscreen}
+                  >
+                    {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

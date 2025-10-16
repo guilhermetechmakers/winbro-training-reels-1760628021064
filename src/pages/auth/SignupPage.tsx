@@ -84,78 +84,87 @@ export default function SignupPage() {
   const passwordStrength = getPasswordStrength(password || '')
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 py-12 px-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 py-12 px-4 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-float-delayed" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-full blur-3xl animate-pulse-slow" />
+      </div>
+
+      <div className="w-full max-w-md space-y-8 relative z-10">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center space-x-2">
-            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-              <span className="text-white font-bold text-lg">W</span>
+        <div className="text-center space-y-4 animate-fade-in-up">
+          <Link to="/" className="inline-flex items-center space-x-3 group">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <span className="text-white font-bold text-xl">W</span>
             </div>
-            <span className="font-bold text-2xl gradient-text">Winbro Training</span>
+            <span className="font-bold text-3xl gradient-text">Winbro Training</span>
           </Link>
-          <h1 className="text-2xl font-bold">Create your account</h1>
-          <p className="text-muted-foreground">
-            Get started with your free trial today
-          </p>
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold">Create your account</h1>
+            <p className="text-lg text-muted-foreground">
+              Get started with your free trial today and transform your team's knowledge
+            </p>
+          </div>
         </div>
 
         {/* Signup Form */}
-        <Card className="animate-fade-in-up">
-          <CardHeader>
-            <CardTitle>Sign Up</CardTitle>
-            <CardDescription>
+        <Card className="animate-fade-in-up border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-2xl" style={{ animationDelay: '200ms' }}>
+          <CardHeader className="space-y-2">
+            <CardTitle className="text-2xl font-bold text-center">Sign Up</CardTitle>
+            <CardDescription className="text-center text-base">
               Create your account to start preserving knowledge
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="name" className="text-base font-medium">Full Name</Label>
                   <Input
                     id="name"
                     placeholder="John Doe"
                     {...register('name')}
-                    className={errors.name ? 'border-destructive' : ''}
+                    className={`h-12 text-base ${errors.name ? 'border-destructive focus:border-destructive' : 'input-focus'}`}
                   />
                   {errors.name && (
-                    <p className="text-sm text-destructive">{errors.name.message}</p>
+                    <p className="text-sm text-destructive animate-fade-in-up">{errors.name.message}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-base font-medium">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="john@company.com"
                     {...register('email')}
-                    className={errors.email ? 'border-destructive' : ''}
+                    className={`h-12 text-base ${errors.email ? 'border-destructive focus:border-destructive' : 'input-focus'}`}
                   />
                   {errors.email && (
-                    <p className="text-sm text-destructive">{errors.email.message}</p>
+                    <p className="text-sm text-destructive animate-fade-in-up">{errors.email.message}</p>
                   )}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company">Company</Label>
+                <Label htmlFor="company" className="text-base font-medium">Company</Label>
                 <Input
                   id="company"
                   placeholder="Your Company Inc."
                   {...register('company')}
-                  className={errors.company ? 'border-destructive' : ''}
+                  className={`h-12 text-base ${errors.company ? 'border-destructive focus:border-destructive' : 'input-focus'}`}
                 />
                 {errors.company && (
-                  <p className="text-sm text-destructive">{errors.company.message}</p>
+                  <p className="text-sm text-destructive animate-fade-in-up">{errors.company.message}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
+                <Label htmlFor="role" className="text-base font-medium">Role</Label>
                 <Select onValueChange={(value) => setValue('role', value as UserRole)}>
-                  <SelectTrigger className={errors.role ? 'border-destructive' : ''}>
+                  <SelectTrigger className={`h-12 text-base ${errors.role ? 'border-destructive focus:border-destructive' : 'input-focus'}`}>
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -167,31 +176,31 @@ export default function SignupPage() {
                   </SelectContent>
                 </Select>
                 {errors.role && (
-                  <p className="text-sm text-destructive">{errors.role.message}</p>
+                  <p className="text-sm text-destructive animate-fade-in-up">{errors.role.message}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-base font-medium">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Create a strong password"
                     {...register('password')}
-                    className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
+                    className={`h-12 text-base pr-12 ${errors.password ? 'border-destructive focus:border-destructive' : 'input-focus'}`}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-12 w-12 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      <EyeOff className="h-5 w-5 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Eye className="h-5 w-5 text-muted-foreground" />
                     )}
                   </Button>
                 </div>
@@ -201,7 +210,7 @@ export default function SignupPage() {
                       {[1, 2, 3, 4, 5].map((level) => (
                         <div
                           key={level}
-                          className={`h-1 w-full rounded ${
+                          className={`h-2 w-full rounded-full transition-all duration-300 ${
                             level <= passwordStrength
                               ? passwordStrength <= 2
                                 ? 'bg-destructive'
@@ -213,7 +222,7 @@ export default function SignupPage() {
                         />
                       ))}
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       {passwordStrength <= 2
                         ? 'Weak password'
                         : passwordStrength <= 3
@@ -223,90 +232,94 @@ export default function SignupPage() {
                   </div>
                 )}
                 {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password.message}</p>
+                  <p className="text-sm text-destructive animate-fade-in-up">{errors.password.message}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword" className="text-base font-medium">Confirm Password</Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Confirm your password"
                     {...register('confirmPassword')}
-                    className={errors.confirmPassword ? 'border-destructive pr-10' : 'pr-10'}
+                    className={`h-12 text-base pr-12 ${errors.confirmPassword ? 'border-destructive focus:border-destructive' : 'input-focus'}`}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-12 w-12 hover:bg-transparent"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      <EyeOff className="h-5 w-5 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Eye className="h-5 w-5 text-muted-foreground" />
                     )}
                   </Button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+                  <p className="text-sm text-destructive animate-fade-in-up">{errors.confirmPassword.message}</p>
                 )}
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-start space-x-2">
+                <div className="flex items-start space-x-3">
                   <Checkbox
                     id="termsAccepted"
                     {...register('termsAccepted')}
-                    className="mt-1"
+                    className="mt-1 w-5 h-5"
                   />
                   <div className="space-y-1">
-                    <Label htmlFor="termsAccepted" className="text-sm">
+                    <Label htmlFor="termsAccepted" className="text-sm leading-relaxed cursor-pointer">
                       I agree to the{' '}
-                      <Link to="/terms" className="text-primary hover:underline">
+                      <Link to="/terms" className="text-primary hover:underline font-medium">
                         Terms of Service
                       </Link>{' '}
                       and{' '}
-                      <Link to="/privacy" className="text-primary hover:underline">
+                      <Link to="/privacy" className="text-primary hover:underline font-medium">
                         Privacy Policy
                       </Link>
                     </Label>
                     {errors.termsAccepted && (
-                      <p className="text-sm text-destructive">{errors.termsAccepted.message}</p>
+                      <p className="text-sm text-destructive animate-fade-in-up">{errors.termsAccepted.message}</p>
                     )}
                   </div>
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button 
+                type="submit" 
+                className="w-full h-12 text-base font-semibold btn-hover shadow-lg hover:shadow-xl" 
+                disabled={isLoading}
+              >
+                {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
                 Create Account
               </Button>
             </form>
 
             {/* Social Signup */}
-            <div className="mt-6">
+            <div className="space-y-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+                  <span className="w-full border-t border-border/50" />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
+                <div className="relative flex justify-center text-sm">
+                  <span className="bg-card px-4 text-muted-foreground font-medium">
                     Or continue with
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <Button
                   variant="outline"
                   onClick={handleGoogleSignup}
-                  className="w-full"
+                  className="w-full h-12 btn-hover"
                 >
-                  <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -329,18 +342,18 @@ export default function SignupPage() {
                 <Button
                   variant="outline"
                   onClick={handleSSOSignup}
-                  className="w-full"
+                  className="w-full h-12 btn-hover"
                 >
-                  <Shield className="h-4 w-4 mr-2" />
+                  <Shield className="h-5 w-5 mr-2" />
                   SSO
                 </Button>
               </div>
             </div>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
+            <div className="text-center">
+              <p className="text-base text-muted-foreground">
                 Already have an account?{' '}
-                <Link to="/auth/login" className="text-primary hover:underline">
+                <Link to="/auth/login" className="text-primary hover:text-primary/80 hover:underline font-medium transition-colors">
                   Sign in
                 </Link>
               </p>
@@ -349,7 +362,7 @@ export default function SignupPage() {
         </Card>
 
         {/* Footer */}
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-muted-foreground animate-fade-in-up" style={{ animationDelay: '400ms' }}>
           <p>
             By creating an account, you agree to our{' '}
             <Link to="/terms" className="text-primary hover:underline">
